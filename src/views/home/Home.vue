@@ -1,7 +1,6 @@
 <template>
   <div>
     <h2>首页</h2>
-    <h2>as家的话</h2>
   </div>
 </template>
 
