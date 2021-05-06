@@ -64,14 +64,16 @@
 </template>
 
 <script>
+//公共组件
 import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/content/tabcontrol/TabControl'
 
-
+//本页面的组件
 import HomeSwiper from './childrencpn/HomeSwiper'
 import FeatrueView from './childrencpn/FeatrueView'
 import ReCommendView from './childrencpn/ReCommendView'
 
+//导入封装的方法。
 import {GetRequestData,GetHomeGoods} from 'network/home'
 
 export default {
