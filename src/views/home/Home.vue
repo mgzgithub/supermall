@@ -1,22 +1,23 @@
 <template>
   <div>
-    <nav-bar class="home-navbar">
-      <template v-slot:centenslot><div>购物街</div></template>
-    </nav-bar>
-    <home-swiper :banners = "banners"></home-swiper>
+    <nav-bar class="home-navbar"><template v-slot:centenslot><div>购物街</div></template></nav-bar>
+    <home-swiper :banners = "banners" />
+    <re-commend-view :recommends = "recommends" />
   </div>
 </template>
 
 <script>
 import NavBar from 'components/common/navbar/NavBar'
 import HomeSwiper from './childrencpn/HomeSwiper'
+import ReCommendView from './childrencpn/ReCommendView'
 import {GetRequestData} from 'network/home'
 
 export default {
   name:'Home',
   components:{
     NavBar,
-    HomeSwiper
+    HomeSwiper,
+    ReCommendView
   },
   data() {
     return {
