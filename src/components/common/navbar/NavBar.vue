@@ -18,6 +18,12 @@
     height: 40px;
     line-height: 40px;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    top:0;
+    z-index: 2;
   }
   .leftbox,.rightbox{
     width: 15%;
