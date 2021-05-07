@@ -1,65 +1,11 @@
 <template>
   <div>
-    <nav-bar class="home-navbar"
-      ><template v-slot:centenslot><div>购物街</div></template></nav-bar
-    >
+    <nav-bar class="home-navbar"><template v-slot:centenslot><div>购物街</div></template></nav-bar>
     <home-swiper :banners="banners" />
     <re-commend-view :recommends="recommends" />
     <featrue-view />
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" />
-
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>11</li>
-      <li>12</li>
-      <li>13</li>
-      <li>14</li>
-      <li>15</li>
-      <li>16</li>
-      <li>17</li>
-      <li>18</li>
-      <li>19</li>
-      <li>20</li>
-      <li>21</li>
-      <li>22</li>
-      <li>23</li>
-      <li>24</li>
-      <li>25</li>
-      <li>26</li>
-      <li>27</li>
-      <li>28</li>
-      <li>29</li>
-      <li>30</li>
-      <li>31</li>
-      <li>32</li>
-      <li>33</li>
-      <li>34</li>
-      <li>35</li>
-      <li>36</li>
-      <li>37</li>
-      <li>38</li>
-      <li>39</li>
-      <li>40</li>
-      <li>41</li>
-      <li>42</li>
-      <li>43</li>
-      <li>44</li>
-      <li>45</li>
-      <li>46</li>
-      <li>47</li>
-      <li>48</li>
-      <li>49</li>
-      <li>50</li>
-    </ul>
+    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
+    <goods-list :goodslist = "showGoods" />
   </div>
 </template>
 
@@ -67,6 +13,7 @@
 //公共组件
 import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/content/tabcontrol/TabControl'
+import GoodsList from 'components/content/goodslist/GoodsList'
 
 //本页面的组件
 import HomeSwiper from './childrencpn/HomeSwiper'
@@ -81,9 +28,11 @@ export default {
   components:{
     NavBar,
     TabControl,
+    GoodsList,
     HomeSwiper,
-    ReCommendView,
-    FeatrueView
+    FeatrueView,
+    ReCommendView
+    
   },
   data() {
     return {
@@ -93,7 +42,13 @@ export default {
         'pop':{page:0,list:[]},
         'new':{page:0,list:[]},
         'sell':{page:0,list:[]}
-      }
+      },
+      currentType:'pop'
+    }
+  },
+  computed:{
+    showGoods(){
+      return this.goods[this.currentType].list
     }
   },
   //生命周期函数，主页创建时就执行
@@ -107,6 +62,29 @@ export default {
     this.GetHomeGoods('sell');
   },
   methods: {
+    /**
+     * 事件监听方法
+     */
+    tabClick(index){
+      //我怎么就想不到呢？
+      switch(index){
+        case 0:
+          this.currentType = 'pop'
+          break
+        case 1:
+          this.currentType = 'new'
+          break
+        case 2:
+          this.currentType = 'sell'
+          break
+      }
+    },
+
+
+
+    /**
+     * 网络请求方法
+     */
     //获取轮播图等数据。
     GetRequestData(){
         GetRequestData().then(res => {
@@ -139,6 +117,7 @@ export default {
 }
 .tab-control {
   position: sticky;
-  top: 40px;
+  top: 39px;
+  z-index: 2;
 }
 </style>

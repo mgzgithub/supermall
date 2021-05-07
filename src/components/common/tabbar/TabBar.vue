@@ -20,5 +20,6 @@
 		right: 0;
 		bottom: 0;
 		box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.2);
+		z-index: 3;
 	}
 </style>

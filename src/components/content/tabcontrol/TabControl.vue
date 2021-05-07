@@ -23,6 +23,8 @@
     methods: {
       itemClick(index){
         this.isindex=index;
+        //因为要监听分类的点击，但是他又是个组件。子组件向往外传数据就要用到自定义事件$emit
+        this.$emit('tabClick',index)
       }
     },  
   }
