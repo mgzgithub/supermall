@@ -1,19 +1,27 @@
 <template>
-  <div>
+  <div id="home">
     <nav-bar class="home-navbar"><template v-slot:centenslot><div>购物街</div></template></nav-bar>
-    <home-swiper :banners="banners" />
-    <re-commend-view :recommends="recommends" />
-    <featrue-view />
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
-    <goods-list :goodslist = "showGoods" />
+    <scroll :probeType = "3" class="scroll-content" 
+    ref="scroll" @scroll="monitorScroll"
+    @pullingUp="loadMore">
+      <home-swiper :banners="banners" />
+      <re-commend-view :recommends="recommends" />
+      <featrue-view />
+      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
+      <goods-list :goodslist = "showGoods" />
+    </scroll>
+    <back-top v-show="isShowTop" @click.native="BackClick"/>
   </div>
 </template>
 
 <script>
 //公共组件
 import NavBar from 'components/common/navbar/NavBar'
+import Scroll from 'components/common/scroll/Scroll'
 import TabControl from 'components/content/tabcontrol/TabControl'
 import GoodsList from 'components/content/goodslist/GoodsList'
+import BackTop from 'components/content/backtop/BackTop'
+
 
 //本页面的组件
 import HomeSwiper from './childrencpn/HomeSwiper'
@@ -27,8 +35,10 @@ export default {
   name:'Home',
   components:{
     NavBar,
+    Scroll,
     TabControl,
     GoodsList,
+    BackTop,
     HomeSwiper,
     FeatrueView,
     ReCommendView
@@ -43,7 +53,8 @@ export default {
         'new':{page:0,list:[]},
         'sell':{page:0,list:[]}
       },
-      currentType:'pop'
+      currentType:'pop',
+      isShowTop:false
     }
   },
   computed:{
@@ -61,10 +72,22 @@ export default {
     this.GetHomeGoods('new');
     this.GetHomeGoods('sell');
   },
+  mounted() {
+    //添加防抖函数
+    const refresh = this.debounce(this.$refs.scroll.refresh,50)
+
+    //图片加载完成就刷新一次,加了防抖之后就不会频繁执行了。
+    this.$bus.$on('itemImageLoad',() => {
+      //this.$refs.scroll.refresh();
+      refresh();
+    })
+  },
+
   methods: {
     /**
      * 事件监听方法
      */
+    //切换类型点击方法
     tabClick(index){
       //我怎么就想不到呢？
       switch(index){
@@ -80,7 +103,31 @@ export default {
       }
     },
 
+    //调用回到顶部方法
+    BackClick(){
+      this.$refs.scroll.scrollTo(0,0,1000);
+    },
 
+    //监听滚动位置的方法
+    monitorScroll(position){
+      this.isShowTop = position.y < -1300
+    },
+
+    //上拉加载更多方法
+    loadMore(){
+      this.GetHomeGoods(this.currentType)
+    },
+
+    //防抖函数
+    debounce(func,delay){
+      let timer = null
+      return function(...args){
+        if(timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          func.apply(this,args)
+        }, delay);
+      }
+    },
 
     /**
      * 网络请求方法
@@ -103,6 +150,8 @@ export default {
         //这样写的话代表 每次根据当前页码请求到的数据，都会依次追加到原来的list中。push的原义就是：在数组中添加新元素
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page += 1
+        //回调重复上拉加载
+        this.$refs.scroll.finishPullUp();
       })
     },
   },
@@ -110,6 +159,13 @@ export default {
 </script>
 
 <style>
+
+#home{
+  position: relative;
+  /* vh 代表可以获取当前对象视图大小的高度 100 = 100% */
+  height: 100vh;
+}
+
 .home-navbar {
   background: #ff8e96;
   text-align: center;
@@ -120,4 +176,12 @@ export default {
   top: 39px;
   z-index: 2;
 }
+.scroll-content{
+  position: absolute;
+  top: 40px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+}
+
 </style>

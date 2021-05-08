@@ -1,7 +1,7 @@
 <template>
 <!-- 接受到大goodslist遍历传来的数据，定义成对象。然后一个个展示 -->
   <div class="goods-item">
-    <img :src="goodsitem.show.img" alt="图片加载失败">
+    <img :src="goodsitem.show.img" alt="图片加载失败" @load="itemImgLoad">
     <div>
       <p>{{goodsitem.title}}</p>
       <p><span>{{goodsitem.orgPrice}}</span><span id="icon">{{goodsitem.cfav}}</span></p>
@@ -17,7 +17,12 @@
         type:Object,
         default:{}
       },
-    }
+    },
+    methods: {
+      itemImgLoad(){
+        this.$bus.$emit('itemImageLoad')
+      }
+    },
   }
 </script>
 
