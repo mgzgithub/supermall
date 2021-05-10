@@ -1,13 +1,19 @@
 <template>
   <div id="home">
     <nav-bar class="home-navbar"><template v-slot:centenslot><div>购物街</div></template></nav-bar>
-    <scroll :probeType = "3" class="scroll-content" 
-    ref="scroll" @scroll="monitorScroll"
-    @pullingUp="loadMore">
-      <home-swiper :banners="banners" />
+    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" 
+      @tabClick="tabClick" ref="tabControlOne" v-show="isTabShow" />
+    <scroll :probeType = "3" 
+            class="scroll-content" 
+            ref="scroll" 
+            :pullUpload = "true"     
+            @scroll="monitorScroll"
+            @pullingUp="loadMore" >
+      <home-swiper :banners="banners" @swiperImgLoad = "swiperImgLoad" />
       <re-commend-view :recommends="recommends" />
       <featrue-view />
-      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
+      <tab-control :titles="['流行', '新款', '精选']" 
+        @tabClick="tabClick" ref="tabControlTwo" />
       <goods-list :goodslist = "showGoods" />
     </scroll>
     <back-top v-show="isShowTop" @click.native="BackClick"/>
@@ -30,6 +36,7 @@ import ReCommendView from './childrencpn/ReCommendView'
 
 //导入封装的方法。
 import {GetRequestData,GetHomeGoods} from 'network/home'
+import {debounce} from 'common/utils'
 
 export default {
   name:'Home',
@@ -54,7 +61,10 @@ export default {
         'sell':{page:0,list:[]}
       },
       currentType:'pop',
-      isShowTop:false
+      isShowTop:false,
+      TabOffsetTop:0,
+      isTabShow:false,
+      scrollY:0
     }
   },
   computed:{
@@ -73,20 +83,26 @@ export default {
     this.GetHomeGoods('sell');
   },
   mounted() {
-    //添加防抖函数
-    const refresh = this.debounce(this.$refs.scroll.refresh,50)
-
+    //调用防抖函数
+    const refresh = debounce(this.$refs.scroll.refresh,50)
     //图片加载完成就刷新一次,加了防抖之后就不会频繁执行了。
     this.$bus.$on('itemImageLoad',() => {
-      //this.$refs.scroll.refresh();
       refresh();
     })
+  },
+  activated() {
+    this.$refs.scroll.scrollTo(0,this.scrollY,0)
+    this.$refs.scroll.refresh()//回到保存的位置之后刷新一次，避免某些拖动bug
+  },
+  deactivated() {
+    this.scrollY = this.$refs.scroll.getScrollY()
   },
 
   methods: {
     /**
      * 事件监听方法
      */
+
     //切换类型点击方法
     tabClick(index){
       //我怎么就想不到呢？
@@ -101,6 +117,8 @@ export default {
           this.currentType = 'sell'
           break
       }
+      this.$refs.tabControlOne.isindex = index
+      this.$refs.tabControlTwo.isindex = index
     },
 
     //调用回到顶部方法
@@ -111,6 +129,7 @@ export default {
     //监听滚动位置的方法
     monitorScroll(position){
       this.isShowTop = position.y < -1300
+      this.isTabShow = position.y < -(this.TabOffsetTop+41)
     },
 
     //上拉加载更多方法
@@ -118,16 +137,13 @@ export default {
       this.GetHomeGoods(this.currentType)
     },
 
-    //防抖函数
-    debounce(func,delay){
-      let timer = null
-      return function(...args){
-        if(timer) clearTimeout(timer)
-        timer = setTimeout(() => {
-          func.apply(this,args)
-        }, delay);
-      }
+    //获取tab栏距离顶部的距离
+    swiperImgLoad(){
+      //$el 拿到组件下的根元素
+      this.TabOffsetTop = this.$refs.tabControlTwo.$el.offsetTop
     },
+
+    
 
     /**
      * 网络请求方法
@@ -167,14 +183,14 @@ export default {
 }
 
 .home-navbar {
+  position: relative;
   background: #ff8e96;
   text-align: center;
   color: #fff;
 }
 .tab-control {
-  position: sticky;
-  top: 39px;
-  z-index: 2;
+  position:relative;
+  z-index: 3;
 }
 .scroll-content{
   position: absolute;

@@ -4,6 +4,7 @@ import Home from 'views/home/Home'
 const Cart = () =>  import('views/cart/Cart')
 const Category = () => import('views/category/Category')
 const Profile = () => import('views/profile/Profile')
+const Detail = () => import('views/detail/Detail')
 
 //解决重复点击同路由报错问题
 const originalReplace = VueRouter.prototype.replace;
@@ -37,6 +38,11 @@ const routes = [
     path: '/Profile',
     name: 'Profile',
     component: Profile
+  },
+  {
+    path: '/Detail:iid',
+    name: 'Detail',
+    component: Detail
   },
 ]
 

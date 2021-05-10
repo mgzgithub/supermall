@@ -33,6 +33,9 @@
         pullUpload:this.pullUpload,//监听上拉事件
         disableTouch: false,//可能版本太低不支持这个属性。pc初次打开移动端
       })
+      
+      //console.log(this.descroll.options.probeType);
+      
       //监听滚动位置方法
       this.descroll.on('scroll',(position) => {
         //带参传出自定义监听滚动事件
@@ -61,6 +64,11 @@
       //图片加载完成刷新方法封装
       refresh(){
         this.descroll.refresh();
+      },
+
+      //获取离开位置方法封装
+      getScrollY(){
+        return this.descroll ? this.descroll.y : 0
       }
     },
   }
