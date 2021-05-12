@@ -25,13 +25,14 @@ export default {
   },
   data() {
     return {
-      titles:['商品','参数','评论','推荐'],
+      titles:['商品','评论','详情','推荐'],
       currentIndex:0
     }
   },
   methods: {
     DeActiveClass(index){
       this.currentIndex = index
+      this.$emit('NavTabClick',index)
     },
     DetailbackCk(){
       this.$router.back()

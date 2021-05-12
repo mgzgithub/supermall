@@ -26,7 +26,6 @@ import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
 import TabControl from 'components/content/tabcontrol/TabControl'
 import GoodsList from 'components/content/goodslist/GoodsList'
-import BackTop from 'components/content/backtop/BackTop'
 
 
 //本页面的组件
@@ -36,7 +35,7 @@ import ReCommendView from './childrencpn/ReCommendView'
 
 //导入封装的方法。
 import {GetRequestData,GetHomeGoods} from 'network/home'
-import {debounce} from 'common/utils'
+import {itemListenerMixin,backTopMixin} from 'common/mixin'
 
 export default {
   name:'Home',
@@ -45,7 +44,6 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
-    BackTop,
     HomeSwiper,
     FeatrueView,
     ReCommendView
@@ -61,7 +59,6 @@ export default {
         'sell':{page:0,list:[]}
       },
       currentType:'pop',
-      isShowTop:false,
       TabOffsetTop:0,
       isTabShow:false,
       scrollY:0
@@ -82,13 +79,15 @@ export default {
     this.GetHomeGoods('new');
     this.GetHomeGoods('sell');
   },
+  mixins:[itemListenerMixin,backTopMixin],
   mounted() {
-    //调用防抖函数
+    //源代码已经迁移至mixin中
+    /* //调用防抖函数
     const refresh = debounce(this.$refs.scroll.refresh,50)
     //图片加载完成就刷新一次,加了防抖之后就不会频繁执行了。
     this.$bus.$on('itemImageLoad',() => {
       refresh();
-    })
+    }) */
   },
   activated() {
     this.$refs.scroll.scrollTo(0,this.scrollY,0)
@@ -96,8 +95,8 @@ export default {
   },
   deactivated() {
     this.scrollY = this.$refs.scroll.getScrollY()
+    this.$bus.$off('itemImageLoad',this.itemImgListener)
   },
-
   methods: {
     /**
      * 事件监听方法
@@ -121,14 +120,9 @@ export default {
       this.$refs.tabControlTwo.isindex = index
     },
 
-    //调用回到顶部方法
-    BackClick(){
-      this.$refs.scroll.scrollTo(0,0,1000);
-    },
-
     //监听滚动位置的方法
     monitorScroll(position){
-      this.isShowTop = position.y < -1300
+      this.BackTopShow(position)
       this.isTabShow = position.y < -(this.TabOffsetTop+41)
     },
 

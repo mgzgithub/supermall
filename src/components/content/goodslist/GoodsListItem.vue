@@ -1,7 +1,7 @@
 <template>
 <!-- 接受到大goodslist遍历传来的数据，定义成对象。然后一个个展示 -->
   <div class="goods-item" @click="GdItemClick">
-    <img :src="goodsitem.show.img" alt="图片加载失败" @load="itemImgLoad">
+    <img :src="showImage" alt="图片加载失败" @load="itemImgLoad">
     <div>
       <p>{{goodsitem.title}}</p>
       <p><span>{{goodsitem.orgPrice}}</span><span id="icon">{{goodsitem.cfav}}</span></p>
@@ -18,8 +18,24 @@
         default:{}
       },
     },
+    computed:{
+      showImage(){
+        //如果前面为空 就返回后面的 
+        return this.goodsitem.image || this.goodsitem.show.img
+      }
+    },
     methods: {
       itemImgLoad(){
+        //我们点击进入详情页之后。首页已不再展示。但是我们首页依旧在接收这个事件
+        //影响性能。怎么让我点击详情页之后就让首页不再监听这个事件。然后改为详情页监听？
+        //首先 判断当前路由活跃然后发出不同事件是一种方法：
+        /* if(this.$route.push.indexOf('/home')){
+          this.$bus.$emit('homeItemImageLoad')
+        }else if(this.$route.push.indexOf('/detail')){
+          this.$bus.$emit('detailItemImageLoad')
+        } */
+
+        //第二种方法：混入mixin
         this.$bus.$emit('itemImageLoad')
       },
       GdItemClick(){

@@ -1,5 +1,6 @@
 import {request} from './request'
 
+//获取detail的数据网络请求
 export function GetDetailData(iid){
   return request({
     url:'/detail',
@@ -8,6 +9,14 @@ export function GetDetailData(iid){
     }
   })
 }
+
+//获取推荐数据网络请求
+export function GetRecommend(){
+  return request({
+    url:'/recommend',
+  })
+}
+
 
 //es6创建类。整合数据 使用构造函数
 //导出商品详情数据
