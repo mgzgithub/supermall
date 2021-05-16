@@ -41,6 +41,6 @@ export default {
 
 <style>
   .home-swiper{
-    margin-top: 40px;
+    margin-top: 39.5px;
   }
 </style>

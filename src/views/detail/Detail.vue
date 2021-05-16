@@ -34,6 +34,8 @@ import DetailBottomBar from "./childrencpn/DetailBottomBar";
 //导入网络请求或其他方法
 import { GetDetailData, DetailGoods, DetailShop, DeGoodsParam, GetRecommend } from "network/detail";
 import {itemListenerMixin,backTopMixin} from 'common/mixin'
+
+import {mapActions} from 'vuex'
 export default {
   name: "Detail",
   data() {
@@ -104,6 +106,7 @@ export default {
     this.$bus.$off('itemImageLoad',this.itemImgListener)
   },
   methods: {
+    ...mapActions(['addCart']),
     //详情图刷新
     imageLoad(){
       this.$refs.scroll.refresh()
@@ -146,7 +149,13 @@ export default {
         price : this.DetailGdList.realPrice,
         iid : this.iid
       }
-      console.log(product);
+      //提交到vuex的actions中
+      //this.$store.dispatch('addCart',product)
+
+      //点击购物车弹出提示--插件封装方法
+      this.addCart(product).then(res => {
+        this.$toast.show(res,2000)
+      })
     }
   },
 };
@@ -160,7 +169,7 @@ export default {
     z-index: 4;
   }
   .de-scroll{
-    height: calc(100% - 60px);
+    height: calc(100% - 90px);
   }
 </style>>
   

@@ -1,7 +1,7 @@
 <template>
 <!-- 接受到大goodslist遍历传来的数据，定义成对象。然后一个个展示 -->
   <div class="goods-item" @click="GdItemClick">
-    <img :src="showImage" alt="图片加载失败" @load="itemImgLoad">
+    <img :src="showImage" @load="itemImgLoad">
     <div>
       <p>{{goodsitem.title}}</p>
       <p><span>{{goodsitem.orgPrice}}</span><span id="icon">{{goodsitem.cfav}}</span></p>
@@ -45,7 +45,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .goods-item{
     text-align: center;
     width: 48%;

@@ -1,7 +1,7 @@
 <template>
   <swiper class="detail-swiper">
     <swiper-item v-for="item in TopimgList">
-        <img :src="item" alt="图片加载失败"/>
+        <img v-lazy="item" alt="图片加载失败"/>
     </swiper-item>
   </swiper>
 </template>
