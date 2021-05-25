@@ -116,6 +116,8 @@ export default {
           this.currentType = 'sell'
           break
       }
+      this.$refs.scroll.refresh()
+      console.log('执行了刷新');
       this.$refs.tabControlOne.isindex = index
       this.$refs.tabControlTwo.isindex = index
     },
